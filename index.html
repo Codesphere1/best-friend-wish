@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cutest Best Friend</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #play-pause-btn {
+     display: none;
+ }
+ 
+     </style>
+</head>
+<body>
+
+   
+      <!-- Background Music (Hidden) -->
+      <audio id="bg-music" autoplay loop>
+        <source src="music/ganisha.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+<!-- Play/Pause Button -->
+<button id="play-pause-btn">Play Music</button>
+
+
+    <div class="cursor"></div>
+    <div class="container">
+        <h1>The Cutest Best Friend Ever Chomuuu..🤭💗</h1>
+        <div class="greeting"></div>
+        <button class="cta-button">Click to Enter Our World 💕</button>
+    </div>
+
+
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let audio = document.getElementById("bg-music");
+            let playPauseBtn = document.getElementById("play-pause-btn");
+
+            // Restore play state
+            if (sessionStorage.getItem("musicPlaying") === "true") {
+                audio.play();
+                playPauseBtn.textContent = "Pause Music";
+            }
+
+            // Restore playback time
+            let savedTime = sessionStorage.getItem("musicTime");
+            if (savedTime) {
+                audio.currentTime = savedTime;
+            }
+
+            // Save playback time before page unloads
+            window.addEventListener("beforeunload", function () {
+                sessionStorage.setItem("musicTime", audio.currentTime);
+            });
+
+            // Save play/pause state
+            audio.onplay = () => {
+                sessionStorage.setItem("musicPlaying", "true");
+                playPauseBtn.textContent = "Pause Music";
+            };
+            audio.onpause = () => {
+                sessionStorage.setItem("musicPlaying", "false");
+                playPauseBtn.textContent = "Play Music";
+            };
+
+            // Play/Pause Button Functionality
+            playPauseBtn.addEventListener("click", function () {
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            });
+        });
+    </script>
+    
+    
+    
+    
+</body>
+</html>
