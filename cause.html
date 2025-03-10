@@ -16,13 +16,9 @@
 <body>
 
    <!-- Background Music (Hidden) -->
-   <audio id="bg-music" loop>
-    <source src="music/ganisha.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
-
-<!-- Play/Pause Button -->
-<button id="play-pause-btn">Play Music</button>
+  <audio id="bg-music" autoplay loop>
+        <source src="https://raw.githubusercontent.com/Codesphere1/music/main/ganisha.mp3" type="audio/mpeg">
+    </audio>
 
 
     <div class="custom-cursor">
@@ -50,49 +46,37 @@
     <script src="cause.js"> </script>
 
 
-    
-    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let audio = document.getElementById("bg-music");
-            let playPauseBtn = document.getElementById("play-pause-btn");
 
-            // Restore play state
-            if (sessionStorage.getItem("musicPlaying") === "true") {
-                audio.play();
-                playPauseBtn.textContent = "Pause Music";
+            // Restore playback time if available
+            if (sessionStorage.getItem("musicTime")) {
+                audio.currentTime = sessionStorage.getItem("musicTime");
             }
 
-            // Restore playback time
-            let savedTime = sessionStorage.getItem("musicTime");
-            if (savedTime) {
-                audio.currentTime = savedTime;
-            }
+            // Force play after a small delay (for iOS compatibility)
+            setTimeout(() => {
+                let playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("Music playing automatically.");
+                    }).catch(() => {
+                        console.log("Autoplay blocked on iOS. Trying user gesture...");
+                        document.body.addEventListener("click", () => {
+                            audio.play();
+                        }, { once: true });
+                    });
+                }
+            }, 1000); // Delay for better autoplay handling
 
-            // Save playback time before page unloads
+            // Store playback position before page unload
             window.addEventListener("beforeunload", function () {
                 sessionStorage.setItem("musicTime", audio.currentTime);
             });
-
-            // Save play/pause state
-            audio.onplay = () => {
-                sessionStorage.setItem("musicPlaying", "true");
-                playPauseBtn.textContent = "Pause Music";
-            };
-            audio.onpause = () => {
-                sessionStorage.setItem("musicPlaying", "false");
-                playPauseBtn.textContent = "Play Music";
-            };
-
-            // Play/Pause Button Functionality
-            playPauseBtn.addEventListener("click", function () {
-                if (audio.paused) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                }
-            });
         });
     </script>
+    
+    
 </body>
 </html>
